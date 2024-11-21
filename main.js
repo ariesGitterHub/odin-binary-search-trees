@@ -16,8 +16,7 @@ const testArr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 
 class Tree {
   constructor(arr) {
-    this.arr = arr
-    this.root = this.buildTree(this.arr); // Root node is set by buildTree
+    this.root = this.buildTree(arr); // Root node is set by buildTree
   }
 
   // Sort and remove duplicates
@@ -89,44 +88,162 @@ class Tree {
 
   // Write insert(value) and deleteItem(value) functions that insert/delete the given value. You’ll have to deal with several cases for delete, such as when a node has children or not. If you need additional resources, check out these two articles on inserting and deleting, or this video on BST inserting/removing with several visual examples.
 
-  insert(value) {
-    //console.log(this.root);
-    //console.log(value);
-    //this.arr.push(value);
-    //console.log(this.arr);
+  // ITERATION OPTION
+  // insert(value) {
+  //   // If the tree is empty, the new node becomes the root
+  //   if (!this.root) {
+  //     this.root = new Node(value);
+  //     return;
+  //   }
+
+  //   let current = this.root;
+
+  //   // Iterate through the tree to find the correct insertion point
+  //   while (current) {
+  //     // If the value already exists in the tree, do nothing
+  //     if (value === current.data) {
+  //       console.log(`This value already exists in the BST.`);
+  //       return;
+  //     }
+
+  //     // If value is less than current node's data, go left
+  //     if (value < current.data) {
+  //       if (!current.left) {
+  //         current.left = new Node(value); // Insert the new node
+  //         return;
+  //       }
+  //       current = current.left; // Move left to continue searching
+  //     }
+  //     // If value is greater than current node's data, go right
+  //     else {
+  //       if (!current.right) {
+  //         current.right = new Node(value); // Insert the new node
+  //         return;
+  //       }
+  //       current = current.right; // Move right to continue searching
+  //     }
+  //   }
+  // }
+
+  // ALTERNATE RECURSION CODE:
+  // insert(value) {
+  //   // Helper function to handle the recursion for insertion
+  //   const addNode = (node, value) => {
+  //     // If we find a null node, this is where the new node should be inserted
+  //     if (node === null) {
+  //       return new Node(value);
+  //     }
+
+  //     // If the value is equal to the current node's data, do nothing (handle duplicates)
+  //     if (value === node.data) {
+  //       console.log(`This value already exists in the BST.`);
+  //       return node; // Return the current node, meaning no changes
+  //     }
+
+  //     // If value is less than current node's data, go left
+  //     if (value < node.data) {
+  //       node.left = addNode(node.left, value);
+  //     }
+  //     // If value is greater than current node's data, go right
+  //     else {
+  //       node.right = addNode(node.right, value);
+  //     }
+
+  //     // Return the node after the recursive insert (this ensures the parent node is updated)
+  //     return node;
+  //   };
+
+  //   // Start the recursion from the root
+  //   if (!this.root) {
+  //     this.root = new Node(value); // If the tree is empty, create the root
+  //   } else {
+  //     this.root = addNode(this.root, value); // Recursively insert value into the tree
+  //   }
+  // }
+
+  // MY OLD VERSION:
+
+//    insert(value) {
+//     //console.log(this.root);
+//     //console.log(value);
+
+//     let newNode = new Node(value);
+//     let current = this.root;
+//     if (!current) {
+//       return newNode;
+//     }
     
+//     function addNode() {
+//       // Duplicates not allowed
+//       if (value === current.data) {
+//         console.log(This value already exists in the BST.);
+//         // return undefined; // Shouldn't this just return???
+//         return current;
+//       }
+//       if (value < current.data) {
+//         if (!current.left) {
+//           current.left = newNode;
+//           return current;
+//         }
+//         current = current.left;
+//         addNode();
+//       } else if (value > current.data) {
+//         if (!current.right) {
+//           current.right = newNode;
+//           return current;
+//         }
+//         current = current.right;
+//         addNode();
+//       }
+//     }
+//     addNode();
+//   }
+// }
 
-    if (!this.root) {
-      return new Node(value);
-    }
-
+insert(value) {
+    let newNode = new Node(value);
     let current = this.root;
-    function addNode() {
+
+    // If the tree is empty, set the root node to the new node
+    if (!current) {
+      this.root = newNode;
+      return;
+    }
+
+    // Recursive helper function to insert the node
+    function addNode(node) {
       // Duplicates not allowed
-      if (value === current.data) {
+      if (value === node.data) {
         console.log(`This value already exists in the BST.`);
-        // return undefined; // Shouldn't this just return???
-        return;
+        return null;  // Do not insert duplicates
       }
-      if (value < current.data) {
-        if (!current.left) {
-          current.left = new Node(value);
-          return;
+
+      // If value is less than the node's data, move to the left
+      if (value < node.data) {
+        if (!node.left) {
+          node.left = newNode;  // Insert the node here
+          return node;
         }
-        current = current.left;
-        addNode();
-      } else if (value > current.data) {
-        if (!current.right) {
-          current.right = new Node(value);
-          return;
+        // Recur on the left child
+        return addNode(node.left);
+      } 
+
+      // If value is greater than the node's data, move to the right
+      else if (value > node.data) {
+        if (!node.right) {
+          node.right = newNode;  // Insert the node here
+          return node;
         }
-        current = current.right;
-        addNode();
+        // Recur on the right child
+        return addNode(node.right);
       }
     }
-    addNode();
-  }
 
+    // Start recursion from the root node
+    addNode(current);
+}
+
+deleteItem(value) {}
 
 }
 
@@ -143,6 +260,8 @@ testBST.insert(27);
 testBST.insert(31);
 testBST.insert(37);
 testBST.insert(619);
+testBST.insert(-23);
+testBST.insert(232323);
 
 console.log(testBST);
 
