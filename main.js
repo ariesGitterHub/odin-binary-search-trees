@@ -332,7 +332,7 @@ class Tree {
         current = current.right;
       } else if (value === current.data) {
         console.log(`BST contains node with value [${value}]`);
-        return current.data;
+        return current;
       }
     }
     console.log(`BST does not contain node with value [${value}]`);
@@ -551,7 +551,17 @@ class Tree {
 
   // 8. Write a height(node) function that returns the given node’s height. Height is defined as the number of edges in the longest path from a given node to a leaf node.
 
-  height(node) {}
+  height(node) {
+    let current = this.root;
+      if (!current) {
+        return false;
+      }
+
+      if(!current.find(node)) {
+        return "NOODLE!"
+      }
+
+  }
 
   // 9. Write a depth(node) function that returns the given node’s depth. Depth is defined as the number of edges in the path from a given node to the tree’s root node.
 
@@ -612,22 +622,25 @@ console.log(testBST.hasValue(50));
 let levelOrderData = testBST.levelOrder((node) => {
   node.data; // This will log each node's data
 });
-console.log(levelOrderData);  // This will print the array of node data
+console.log(`levelOrder: ${levelOrderData}`);  // This will print the array of node data
 
 let inOrderData = testBST.inOrder((node) => {
   node.data; // This will log each node's data
 });
-console.log(inOrderData);  // This will print the array of node data
+console.log(`inOrder: ${inOrderData}`);  // This will print the array of node data
 
 let preOrderData = testBST.preOrder((node) => {
   node.data; // This will log each node's data
 });
-console.log(preOrderData);  // This will print the array of node data
+console.log(`preOrder: ${preOrderData}`);  // This will print the array of node data
 
 let postOrderData = testBST.postOrder((node) => {
   node.data; // This will log each node's data
 });
-console.log(postOrderData);  // This will print the array of node data
+console.log(`postOrder: ${postOrderData}`);  // This will print the array of node data
+
+// console.log(testBST.height(40));
+
 
 console.log(testBST);
 
