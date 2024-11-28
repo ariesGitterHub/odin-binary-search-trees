@@ -39,9 +39,13 @@ class Tree {
 
   // Better version
   sortArr(arr) {
+    if (!arr) {
+      return
+    } else {
     // Sort the array and remove duplicates using a Set
     const cleanArr = [...new Set(arr.sort((a, b) => a - b))];
     return cleanArr;
+    }
   }
 
   buildTreeRecursion(arr, start, end) {
@@ -63,8 +67,12 @@ class Tree {
   }
 
   buildTree(arr) {
+  if (!arr) {
+    return;
+  } else {
     arr = this.sortArr(arr);
     return this.buildTreeRecursion(arr, 0, arr.length - 1);
+  }
   }
 
   // Pretty print function to display the tree structure
@@ -261,7 +269,6 @@ class Tree {
       return this; // Return the tree itself to indicate no changes
     }
 
-
     // Recursive helper function to remove the node
     function removeNode(node, value) {
       if (value === node.data) {
@@ -274,12 +281,16 @@ class Tree {
         }
         // has no left child
         if (node.left === null) {
-          console.log(`Deleted node with value [${value}] (node had no left child)`);
+          console.log(
+            `Deleted node with value [${value}] (node had no left child)`
+          );
           return node.right; // returning the right child effectively removes the node and "bypasses" it, making the right child the new child of the parent node.
         }
         // has no right child
         if (node.right === null) {
-          console.log(`Deleted node with value [${value}] (node had no right child)`);
+          console.log(
+            `Deleted node with value [${value}] (node had no right child)`
+          );
           return node.left; // returning the left child effectively removes the node and "bypasses" it, making the left child the new child of the parent node.
         }
         // has two children, hardest case...
@@ -294,13 +305,17 @@ class Tree {
         }
         node.data = tempNode.data; // replace the data of the current node with the data from this smallest node (tempNode.data).
         node.right = removeNode(node.right, tempNode.data); // recursively call removeNode to delete the smallest node we just copied into the current node. This is done on the right subtree of the current node (node.right).
-        console.log(`Deleted node with value [${value}] (node had two children)`);
+        console.log(
+          `Deleted node with value [${value}] (node had two children)`
+        );
         return node;
       }
       // If the value to be deleted is less than the data of the current node, it means the target node must be in the left subtree. The function recursively calls removeNode on the left child (node.left).
       else if (value < node.data) {
         node.left = removeNode(node.left, value);
-        console.log(`Deleted node with value [${value}] (node had two children)`);
+        console.log(
+          `Deleted node with value [${value}] (node had two children)`
+        );
         return node;
       }
       // If the value is greater than the data of the current node, it means the target node must be in the right subtree. The function recursively calls removeNode on the right child (node.right).
@@ -499,7 +514,7 @@ class Tree {
       throw Error("Callback parameter is required");
     } else {
       let result = new Array();
-      
+
       function traverseNodes(node) {
         callback(node);
         node.left && traverseNodes(node.left);
@@ -551,17 +566,78 @@ class Tree {
 
   // 8. Write a height(node) function that returns the given node’s height. Height is defined as the number of edges in the longest path from a given node to a leaf node.
 
-  height(node) {
-    let current = this.root;
-      if (!current) {
-        return false;
-      }
-
-      if(!current.find(node)) {
-        return "NOODLE!"
-      }
+  height(node) { // recursion
 
   }
+
+
+  // Iterative height method using a queue (level-order traversal)
+//   height(node) {
+//     if (node === null) {
+//       return -1; // If the node is null, return -1 (no edges)
+//     }
+    
+//     let queue = [];
+//     queue.push({ node: node, level: 0 }); // Push the initial node with its level (0)
+//     let maxHeight = 0;
+
+//     while (queue.length > 0) {
+//       let current = queue.shift();
+//       let currentNode = current.node;
+//       let currentLevel = current.level;
+
+//       // Update the maxHeight if the current level is greater
+//       maxHeight = Math.max(maxHeight, currentLevel);
+
+//       // Add the left child to the queue if it exists
+//       if (currentNode.left !== null) {
+//         queue.push({ node: currentNode.left, level: currentLevel + 1 });
+//       }
+      
+//       // Add the right child to the queue if it exists
+//       if (currentNode.right !== null) {
+//         queue.push({ node: currentNode.right, level: currentLevel + 1 });
+//       }
+//     }
+    
+//     return maxHeight;
+//   }
+// }
+
+
+  // Iterative height method using a queue (level-order traversal)
+  height(node) {
+    if (node === null) {
+      return -1; // If the node is null, return -1 (no edges)
+    }
+    
+    let queue = [];
+    queue.push({ node: node, level: 0 }); // Push the initial node with its level (0)
+    let maxHeight = 0;
+
+    while (queue.length > 0) {
+      let current = queue.shift();
+      let currentNode = current.node;
+      let currentLevel = current.level;
+
+      // Update the maxHeight if the current level is greater
+      maxHeight = Math.max(maxHeight, currentLevel);
+
+      // Add the left child to the queue if it exists
+      if (currentNode.left !== null) {
+        queue.push({ node: currentNode.left, level: currentLevel + 1 });
+      }
+      
+      // Add the right child to the queue if it exists
+      if (currentNode.right !== null) {
+        queue.push({ node: currentNode.right, level: currentLevel + 1 });
+      }
+    }
+    
+    return maxHeight;
+  }
+
+
 
   // 9. Write a depth(node) function that returns the given node’s depth. Depth is defined as the number of edges in the path from a given node to the tree’s root node.
 
@@ -639,12 +715,24 @@ let postOrderData = testBST.postOrder((node) => {
 });
 console.log(`postOrder: ${postOrderData}`);  // This will print the array of node data
 
-// console.log(testBST.height(40));
-
 
 console.log(testBST);
 
 testBST.prettyPrint(testBST.root);
+
+let testBST2 = new Tree();
+testBST2.root = new Node(10);
+testBST2.root.left = new Node(5);
+testBST2.root.right = new Node(15);
+testBST2.root.left.left = new Node(3);
+testBST2.root.left.right = new Node(7);
+
+testBST2.prettyPrint(testBST2.root);
+
+// Find the height of node with value 5
+let testNode = testBST2.root.left;  // Node with value 5
+let heightOfNode = testBST2.height(testNode);
+console.log(`Height of node with value 5:`, heightOfNode);  // Output should be 1
 
 // Tie it all together
 // Write a driver script that does the following:
