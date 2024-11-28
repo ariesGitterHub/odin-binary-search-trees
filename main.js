@@ -40,11 +40,11 @@ class Tree {
   // Better version
   sortArr(arr) {
     if (!arr) {
-      return
+      return;
     } else {
-    // Sort the array and remove duplicates using a Set
-    const cleanArr = [...new Set(arr.sort((a, b) => a - b))];
-    return cleanArr;
+      // Sort the array and remove duplicates using a Set
+      const cleanArr = [...new Set(arr.sort((a, b) => a - b))];
+      return cleanArr;
     }
   }
 
@@ -67,12 +67,12 @@ class Tree {
   }
 
   buildTree(arr) {
-  if (!arr) {
-    return;
-  } else {
-    arr = this.sortArr(arr);
-    return this.buildTreeRecursion(arr, 0, arr.length - 1);
-  }
+    if (!arr) {
+      return;
+    } else {
+      arr = this.sortArr(arr);
+      return this.buildTreeRecursion(arr, 0, arr.length - 1);
+    }
   }
 
   // Pretty print function to display the tree structure
@@ -565,83 +565,110 @@ class Tree {
   }
 
   // 8. Write a height(node) function that returns the given node’s height. Height is defined as the number of edges in the longest path from a given node to a leaf node.
+  // NOTE: height is bottom upl, remember that trees are upside down visually with the root at the top.
 
-  height(node) { // recursion
-
+  height(node) {
+    // recursion
   }
 
-
   // Iterative height method using a queue (level-order traversal)
-//   height(node) {
-//     if (node === null) {
-//       return -1; // If the node is null, return -1 (no edges)
-//     }
-    
-//     let queue = [];
-//     queue.push({ node: node, level: 0 }); // Push the initial node with its level (0)
-//     let maxHeight = 0;
+  //   height(node) {
+  //     if (node === null) {
+  //       return -1; // If the node is null, return -1 (no edges)
+  //     }
 
-//     while (queue.length > 0) {
-//       let current = queue.shift();
-//       let currentNode = current.node;
-//       let currentLevel = current.level;
+  //     let queue = [];
+  //     queue.push({ node: node, level: 0 }); // Push the initial node with its level (0)
+  //     let maxHeight = 0;
 
-//       // Update the maxHeight if the current level is greater
-//       maxHeight = Math.max(maxHeight, currentLevel);
+  //     while (queue.length > 0) {
+  //       let current = queue.shift();
+  //       let currentNode = current.node;
+  //       let currentLevel = current.level;
 
-//       // Add the left child to the queue if it exists
-//       if (currentNode.left !== null) {
-//         queue.push({ node: currentNode.left, level: currentLevel + 1 });
-//       }
-      
-//       // Add the right child to the queue if it exists
-//       if (currentNode.right !== null) {
-//         queue.push({ node: currentNode.right, level: currentLevel + 1 });
-//       }
-//     }
-    
-//     return maxHeight;
-//   }
-// }
+  //       // Update the maxHeight if the current level is greater
+  //       maxHeight = Math.max(maxHeight, currentLevel);
 
+  //       // Add the left child to the queue if it exists
+  //       if (currentNode.left !== null) {
+  //         queue.push({ node: currentNode.left, level: currentLevel + 1 });
+  //       }
 
-  // Iterative height method using a queue (level-order traversal)
+  //       // Add the right child to the queue if it exists
+  //       if (currentNode.right !== null) {
+  //         queue.push({ node: currentNode.right, level: currentLevel + 1 });
+  //       }
+  //     }
+
+  //     return maxHeight;
+  //   }
+  // }
+  // RECURSION
   height(node) {
     if (node === null) {
-      return -1; // If the node is null, return -1 (no edges)
+      return -1; // Base case: height of null is -1 (no edges)
     }
-    
-    let queue = [];
-    queue.push({ node: node, level: 0 }); // Push the initial node with its level (0)
-    let maxHeight = 0;
-
-    while (queue.length > 0) {
-      let current = queue.shift();
-      let currentNode = current.node;
-      let currentLevel = current.level;
-
-      // Update the maxHeight if the current level is greater
-      maxHeight = Math.max(maxHeight, currentLevel);
-
-      // Add the left child to the queue if it exists
-      if (currentNode.left !== null) {
-        queue.push({ node: currentNode.left, level: currentLevel + 1 });
-      }
-      
-      // Add the right child to the queue if it exists
-      if (currentNode.right !== null) {
-        queue.push({ node: currentNode.right, level: currentLevel + 1 });
-      }
-    }
-    
-    return maxHeight;
+    let leftHeight = this.height(node.left); // Recursively find height of left subtree
+    let rightHeight = this.height(node.right); // Recursively find height of right subtree
+    return 1 + Math.max(leftHeight, rightHeight); // 1 + max of left and right subtree heights
   }
 
-
-
   // 9. Write a depth(node) function that returns the given node’s depth. Depth is defined as the number of edges in the path from a given node to the tree’s root node.
+  // NOTE: depth is top-down, lol, remember that trees are upside down visually with the root at the top. Also, REMINDER, using find() to set up the target node prevent depth() (or height() from running into an endless loop...e.g.,
+  // let testDepthNode0 = testBST.find(85); // 4 depth
+  // console.log(testBST.depth(testDepthNode0));
 
-  depth(node) {}
+  // ITERATION
+  depth(node) {
+    let current = this.root;
+    if (node === current) {
+      return 0;
+    }
+    let count = 0;
+    while (node !== current) {
+      if (node.data < current.data) {
+        current = current.left;
+        count += 1;
+      } else if (node.data > current.data) {
+        current = current.right;
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  // A RECURSIVE VERSION, review this...not my code
+  // depth(node) {
+  //   // Base case: If the node is found, return the depth as 0
+  //   if (node === this.root) {
+  //     return 0; // Depth of root is 0
+  //   }
+
+  //   // Start recursive depth calculation from the root
+  //   return this._depthRecursive(this.root, node, 0);
+  // }
+
+  // // Helper function to perform the recursion
+  // _depthRecursive(current, targetNode, currentDepth) {
+  //   // Base case: If current node is null, node is not found
+  //   if (current === null) {
+  //     return -1; // Node not found
+  //   }
+
+  //   // If the target node is found
+  //   if (current === targetNode) {
+  //     return currentDepth;
+  //   }
+
+  //   // Recursive step: Search in the left or right subtree
+  //   if (targetNode.data < current.data) {
+  //     // Move to the left child
+  //     return this._depthRecursive(current.left, targetNode, currentDepth + 1);
+  //   } else {
+  //     // Move to the right child
+  //     return this._depthRecursive(current.right, targetNode, currentDepth + 1);
+  //   }
+  // }
 
   // 10. Write an isBalanced function that checks if the tree is balanced. A balanced tree is one where the difference between heights of the left subtree and the right subtree of every node is not more than 1.
 
@@ -715,24 +742,47 @@ let postOrderData = testBST.postOrder((node) => {
 });
 console.log(`postOrder: ${postOrderData}`);  // This will print the array of node data
 
+let testHeightNode0 = testBST.find(85); // 0 height
+let testHeightNode1 = testBST.find(80); // 1 height
+let testHeightNode2 = testBST.find(70); // 2 height
+let testHeightNode3 = testBST.find(60); // 3 height
+let testHeightNode4 = testBST.find(40); // 4 height
+
+console.log(testBST.height(testHeightNode0));
+console.log(testBST.height(testHeightNode1));
+console.log(testBST.height(testHeightNode2));
+console.log(testBST.height(testHeightNode3));
+console.log(testBST.height(testHeightNode4));
+
+let testDepthNode0 = testBST.find(85); // 4 depth
+let testDepthNode1 = testBST.find(80); // 3 depth
+let testDepthNode2 = testBST.find(70); // 2 depth
+let testDepthNode3 = testBST.find(60); // 1 depth
+let testDepthNode4 = testBST.find(40); // 0 depth
+
+console.log(testBST.depth(testDepthNode0));
+console.log(testBST.depth(testDepthNode1));
+console.log(testBST.depth(testDepthNode2));
+console.log(testBST.depth(testDepthNode3));
+console.log(testBST.depth(testDepthNode4));
 
 console.log(testBST);
 
 testBST.prettyPrint(testBST.root);
 
-let testBST2 = new Tree();
-testBST2.root = new Node(10);
-testBST2.root.left = new Node(5);
-testBST2.root.right = new Node(15);
-testBST2.root.left.left = new Node(3);
-testBST2.root.left.right = new Node(7);
+// let testBST2 = new Tree();
+// testBST2.root = new Node(10);
+// testBST2.root.left = new Node(5);
+// testBST2.root.right = new Node(15);
+// testBST2.root.left.left = new Node(3);
+// testBST2.root.left.right = new Node(7);
 
-testBST2.prettyPrint(testBST2.root);
+// testBST2.prettyPrint(testBST2.root);
 
 // Find the height of node with value 5
-let testNode = testBST2.root.left;  // Node with value 5
-let heightOfNode = testBST2.height(testNode);
-console.log(`Height of node with value 5:`, heightOfNode);  // Output should be 1
+// let testNode = testBST2.root.left;  // Node with value 5
+// let heightOfNode = testBST2.height(testNode);
+// console.log(`Height of node with value 5:`, heightOfNode);  // Output should be 1
 
 // Tie it all together
 // Write a driver script that does the following:
