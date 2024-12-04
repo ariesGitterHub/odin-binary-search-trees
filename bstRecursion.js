@@ -6,21 +6,10 @@ class Node {
   }
 }
 
-// class Tree {
-//   constructor(arr) {
-//     this.root = this.buildTree(arr);
-//   }
-
 class Tree {
   constructor(arr = []) {
     this.root = arr.length ? this.buildTree(arr) : null;
   }
-
-  // sortArr(arr) {
-  //   if (!arr) return;
-  //   const cleanArr = [...new Set(arr.sort((a, b) => a - b))];
-  //   return cleanArr;
-  // }
 
   sortArr(arr) {
     return [...new Set(arr.sort((a, b) => a - b))];
@@ -90,7 +79,9 @@ class Tree {
   //   }
   //   addNode(current);
   // }
+
   insert(value) {
+    // More direct version
     let newNode = new Node(value);
     if (!this.root) {
       this.root = newNode;
@@ -172,6 +163,7 @@ class Tree {
     return current.data;
   }
 
+  // Extras I added
   findMax() {
     let current = this.root;
     while (current.right !== null) {
@@ -180,17 +172,27 @@ class Tree {
     return current.data;
   }
 
+  // hasValue(value) { // Iterative
+  //   let current = this.root;
+  //   while (current) {
+  //     if (value === current.data) {
+  //       return true;
+  //     }
+  //     if (value < current.data) {
+  //       current = current.left;
+  //     } else {
+  //       current = current.right;
+  //     }
+  //   }
+  //   return false;
+  // }
+
   hasValue(value) {
+    // More direct
     let current = this.root;
     while (current) {
-      if (value === current.data) {
-        return true;
-      }
-      if (value < current.data) {
-        current = current.left;
-      } else {
-        current = current.right;
-      }
+      if (current.data === value) return true;
+      current = value < current.data ? current.left : current.right;
     }
     return false;
   }
@@ -217,30 +219,51 @@ class Tree {
     return findNode(current);
   }
 
+  // Sticking with iteration on this one, recursion gave me a headache
+  // levelOrder(callback) {
+  //   let result = [];
+  //   let q = [];
+  //   let current = this.root;
+  //   if (!callback) {
+  //     throw Error("Callback parameter is required");
+  //   }
+  //   if (current !== null) {
+  //     q.push(current);
+  //     while (q.length > 0) {
+  //       let node = q.shift();
+  //       callback(node);
+  //       result.push(node.data);
+  //       if (node.left !== null) {
+  //         q.push(node.left);
+  //       }
+  //       if (node.right !== null) {
+  //         q.push(node.right);
+  //       }
+  //     }
+  //     return result;
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
+  // Better version
   levelOrder(callback) {
+    if (!callback) throw new Error("Callback is required");
+    if (!this.root) return null;
+
     let result = [];
-    let q = [];
-    let current = this.root;
-    if (!callback) {
-      throw Error("Callback parameter is required");
+    let queue = [this.root];
+
+    while (queue.length > 0) {
+      let node = queue.shift();
+      callback(node);
+      result.push(node.data);
+
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
     }
-    if (current !== null) {
-      q.push(current);
-      while (q.length > 0) {
-        let node = q.shift();
-        callback(node);
-        result.push(node.data);
-        if (node.left !== null) {
-          q.push(node.left);
-        }
-        if (node.right !== null) {
-          q.push(node.right);
-        }
-      }
-      return result;
-    } else {
-      return null;
-    }
+
+    return result;
   }
 
   inOrder(callback) {
@@ -339,10 +362,11 @@ class Tree {
         return -1;
       }
 
-      let value = node.data;
-      console.log(
-        `Node [${value}]: leftHeight = ${leftHeight}, rightHeight: ${rightHeight}.`
-      );
+      // Below was just to see process in action
+      // let value = node.data;
+      // console.log(
+      //   `Node [${value}]: leftHeight = ${leftHeight}, rightHeight: ${rightHeight}.`
+      // );
 
       return Math.max(leftHeight, rightHeight) + 1;
     }
@@ -350,45 +374,61 @@ class Tree {
     return checkHeight(this.root) !== -1;
   }
 
+  isBalancedALT() {
+    // Slightly less efficient (O(2n) time complexity
+    let current = this.root;
+    function findMinHeight(node = current) {
+      if (node === null) {
+        return -1;
+      }
+      let leftHeight = findMinHeight(node.left);
+      let rightHeight = findMinHeight(node.right);
+      if (leftHeight < rightHeight) {
+        return leftHeight + 1;
+      } else {
+        return rightHeight + 1;
+      }
+    }
+
+    function findMaxHeight(node = current) {
+      if (node === null) {
+        return -1;
+      }
+      let leftHeight = findMaxHeight(node.left);
+      let rightHeight = findMaxHeight(node.right);
+      if (leftHeight > rightHeight) {
+        return leftHeight + 1;
+      } else {
+        return rightHeight + 1;
+      }
+    }
+    console.log(`findMinHeight is ${findMinHeight()}`);
+    console.log(`findMaxHeight is ${findMaxHeight()}`);
+    return findMinHeight() >= findMaxHeight() - 1;
+  }
+
   rebalance() {
     if (this.isBalanced()) {
       console.log(`This tree is already balanced`);
       return;
     }
-    let inOrderData = [];
-    this.inOrder((node) => {
-      inOrderData.push(node.data);
-    });
-    console.log(`[rebalance()] inOrder: ${inOrderData}`);
-    console.log(inOrderData);
+    // let inOrderData = [];
+    // this.inOrder((node) => {
+    //   inOrderData.push(node.data);
+    // });
+    let inOrderData = this.inOrder((node) => {});
+    // console.log(`[rebalance()] inOrder: ${inOrderData}`);
+    // console.log(inOrderData);
     let rebalanced = this.buildTree(inOrderData);
     return (this.root = rebalanced);
   }
 
   // I added this; just a function that checks if the tree is a BST.
-
-  // isBST() {
-  //   let inOrderData = testBST.inOrder((node) => {
-  //     node.data;
-  //   });
-  //   console.log(`isBST: ${inOrderData}`);
-  //   const isAscending = (array) =>
-  //     array.filter((a, i) => a > array[i + 1]).length === 0;
-
-  //   return isAscending(inOrderData);
-  // }
-
   isBST() {
-    // Perform in-order traversal and get the node values in an array
-    let inOrderData = testBST.inOrder((node) => node.data); // Assuming inOrder() returns an array
-
+    let inOrderData = testBST.inOrder((node) => node.data);
     console.log(`inOrderData: ${inOrderData}`);
-
-    // Check if the array is in ascending order
     const isAscending = (array) =>
       array.every((a, i) => i === array.length - 1 || a < array[i + 1]);
-
-    // If array is empty or the values are in ascending order, it is a valid BST
     return inOrderData.length === 0 || isAscending(inOrderData);
   }
 }
@@ -466,6 +506,7 @@ BST.prettyPrint(BST.root);
 
 // 2. Confirm that the tree is balanced by calling isBalanced.
 console.log(BST.isBalanced());
+console.log(BST.isBalancedALT());
 
 // 3. Print out all elements in level, pre, post, and in order.
 let levelOrderData = BST.levelOrder((node) => {
@@ -516,6 +557,7 @@ BST.prettyPrint(BST.root);
 
 // 5. Confirm that the tree is unbalanced by calling isBalanced.
 console.log(BST.isBalanced());
+console.log(BST.isBalancedALT());
 
 // 6. Balance the tree by calling rebalance.
 BST.rebalance();
@@ -523,6 +565,7 @@ BST.prettyPrint(BST.root);
 
 // 7. Confirm that the tree is balanced by calling isBalanced.
 console.log(BST.isBalanced());
+console.log(BST.isBalancedALT());
 
 // 8. Print out all elements in level, pre, post, and in order.
 levelOrderData = BST.levelOrder((node) => {

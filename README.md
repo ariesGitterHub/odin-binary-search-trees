@@ -55,3 +55,6 @@ Write a driver script that does the following:
 6. Balance the tree by calling rebalance.
 7. Confirm that the tree is balanced by calling isBalanced.
 8. Print out all elements in level, pre, post, and in order.
+
+# TODO
+Explore tree rotation and look up Red/Black Trees.
